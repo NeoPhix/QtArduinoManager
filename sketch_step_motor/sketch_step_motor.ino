@@ -12,8 +12,8 @@
 //int x = 0;  //that's our coords
 //int y = 0;
 
-  AF_Stepper motorX(200, 1);
-  AF_Stepper motorY(200, 2);
+AF_Stepper motorX(200, 1);
+AF_Stepper motorY(200, 2);
 
 class MotorsWrapper
 {
@@ -41,7 +41,7 @@ public:
     //Y coordinate
     if (x_new > x)
     {
-      for (; x <= x_new; ++x)
+      for (; x < x_new; ++x)
       {
         motorX.step(1, FORWARD, DOUBLE);
         delay(5);
@@ -49,7 +49,7 @@ public:
     }
     else if (x_new < x)
     {
-      for (; x >= x_new; --x)
+      for (; x > x_new; --x)
       {
         motorX.step(1, BACKWARD, DOUBLE);
         delay(5);
@@ -59,7 +59,7 @@ public:
     //Y coordinates
     if (y_new > y)
     {
-      for (; y <= y_new; ++y)
+      for (; y < y_new; ++y)
       {
         motorY.step(1, FORWARD, DOUBLE);
         delay(5);
@@ -67,7 +67,7 @@ public:
     }
     else if (y_new < y)
     {
-      for (; y >= y_new; --y)
+      for (; y > y_new; --y)
       {
         motorY.step(1, BACKWARD, DOUBLE);
         delay(5);
@@ -91,20 +91,37 @@ private:
 };
 
 MotorsWrapper moto(1000, 1000);
+char incomingByte[256];
 
 void setup() 
 {
   Serial.begin(9600);           // set up Serial library at 9600 bps
-  Serial.println("Stepper test!");
+  //Serial.println("Stepper test!");
 }
+
 
 void loop()
 {
-  //how to paint a square
+  int n = 0;
+  if (Serial.available() > 0)
+  {
+    do
+    {
+      incomingByte[n] = Serial.read();
+      ++n ;
+    } while (incomingByte[n] != '\0') ;
+  }
+  for (int i = 0; i < n; i++)
+    {
+      Serial.print(incomingByte[i]);
+      Serial.print(" ");
+    }
 
+
+  /*
+  //how to paint a square
   moto.printCurrentCoordinate();
   moto.go(100, 100);
-  
   moto.printCurrentCoordinate();
   moto.go(100, 400);
   moto.printCurrentCoordinate();
@@ -113,46 +130,7 @@ void loop()
   moto.go(400, 100);
   moto.printCurrentCoordinate();
   moto.go(100, 100);
-  moto.printCurrentCoordinate();
-
-//  for (; x < 100; ++x, ++y)
-//  {
-//    motorX.step(1, FORWARD, DOUBLE);
-//    motorY.step(1, FORWARD, DOUBLE);
-//    delay(5);
-//  }
-//  //X range
-//  Serial.println("X range");
-//  for (; x < w - 100; ++x)
-//  {
-//     motorX.step(1, FORWARD, DOUBLE);
-//     delay(5);
-//  }
-//  
-//  //Y range
-//  Serial.println("Y range");
-//  for (; y < h - 100; ++y)
-//  {
-//     motorY.step(1, FORWARD, DOUBLE);
-//     delay(5);
-//  }
-//  
-//  //X range back
-//  Serial.println("X range back");
-//  for (; x >= 100; --x)
-//  {
-//     motorX.step(1, BACKWARD, DOUBLE);
-//     delay(5);
-//  }
-//  //Y range back
-//  Serial.println("Y range back");
-//  for (; y >= 100; --y)
-//  {
-//     motorY.step(1, BACKWARD, DOUBLE);
-//     delay(5);
-//  }
-//  
-//  delay(50);
+  */
 }
 
 
