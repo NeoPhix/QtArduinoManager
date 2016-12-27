@@ -102,20 +102,13 @@ void setup()
 
 void loop()
 {
-  int n = 0;
-  if (Serial.available() > 0)
-  {
-    do
-    {
-      incomingByte[n] = Serial.read();
-      ++n ;
-    } while (incomingByte[n] != '\0') ;
-  }
+  int n = Serial.available();
   for (int i = 0; i < n; i++)
-    {
-      Serial.print(incomingByte[i]);
-      Serial.print(" ");
-    }
+  {
+    incomingByte[i] = Serial.read();
+    Serial.print(incomingByte[i]);
+    Serial.print(" ");
+  }
 
 
   /*
