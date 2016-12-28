@@ -3,18 +3,26 @@
 
 
 
-#define COM_PORT "COM7"
-#define BUF_SIZE 10
+#define COM_PORT "COM3"
+#define BUF_SIZE 256
 
 int main()
 {
 	Serial port(COM_PORT);
 	// обнуляем буфер
 	char buf[BUF_SIZE];
+	for (int i = 0; i < BUF_SIZE; i++)
+		buf[i] = '\0';
+
 	while (1)
 	{
 		std::cin >> buf;
-		port.WriteData(buf, BUF_SIZE - 1);
+
+		int bufSize = 0;
+		while (buf[bufSize++] != '\0')
+			bufSize++;
+
+		port.WriteData(buf, bufSize - 1);
 
 		std::cout << "I said: " << buf << std::endl;
 		Sleep(500);

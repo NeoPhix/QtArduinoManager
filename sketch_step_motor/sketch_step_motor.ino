@@ -12,91 +12,120 @@
 //int x = 0;  //that's our coords
 //int y = 0;
 
+//bool strEqual(char[] str1, char[] str2)
+//{
+//  int i = 0;
+//  while (str1[i] != '\0' && str2[i] != '\0')
+//  {
+//    if (str1[i] != str2[i])
+//      return false;
+//    i++;
+//  }
+//  return true;
+//}
+
 AF_Stepper motorX(200, 1);
 AF_Stepper motorY(200, 2);
 
 class MotorsWrapper
 {
-public:
-  MotorsWrapper(int w_, int h_)
-  {
-    x = 0;
-    y = 0;
-    w = w_;
-    h = h_;
-  }
-  void go(int x_new, int y_new)
-  {
-    //Try!
-    if (x_new >= w || x_new < 0)
+  public:
+    MotorsWrapper(int w_, int h_, int del_)
     {
-      Serial.println("X coordinate is unavailable");
-      return;
+      x = 0;
+      y = 0;
+      w = w_;
+      h = h_;
+      del = del_;
     }
-    if (y_new >= h || y_new < 0)
+    void go(int x_new, int y_new)
     {
-      Serial.println("Y coordinate is unavailable");
+      //Try!
+      if (x_new >= w || x_new < 0)
+      {
+        Serial.println("X coordinate is unavailable");
+        return;
+      }
+      if (y_new >= h || y_new < 0)
+      {
+        Serial.println("Y coordinate is unavailable");
+      }
+
+      //Y coordinate
+      if (x_new > x)
+      {
+        for (; x < x_new; ++x)
+        {
+          motorX.step(1, FORWARD, DOUBLE);
+          delay(del);
+        }
+      }
+      else if (x_new < x)
+      {
+        for (; x > x_new; --x)
+        {
+          motorX.step(1, BACKWARD, DOUBLE);
+          delay(del);
+        }
+      }
+
+      //Y coordinates
+      if (y_new > y)
+      {
+        for (; y < y_new; ++y)
+        {
+          motorY.step(1, FORWARD, DOUBLE);
+          delay(del);
+        }
+      }
+      else if (y_new < y)
+      {
+        for (; y > y_new; --y)
+        {
+          motorY.step(1, BACKWARD, DOUBLE);
+          delay(del);
+        }
+      }
     }
 
-    //Y coordinate
-    if (x_new > x)
+    void printCurrentCoordinate()
     {
-      for (; x < x_new; ++x)
-      {
-        motorX.step(1, FORWARD, DOUBLE);
-        delay(5);
-      }
+      Serial.print("current: X: ");
+      Serial.print(x);
+      Serial.print(" Y: ");
+      Serial.println(y);
     }
-    else if (x_new < x)
-    {
-      for (; x > x_new; --x)
-      {
-        motorX.step(1, BACKWARD, DOUBLE);
-        delay(5);
-      }
-    }
-    
-    //Y coordinates
-    if (y_new > y)
-    {
-      for (; y < y_new; ++y)
-      {
-        motorY.step(1, FORWARD, DOUBLE);
-        delay(5);
-      }
-    }
-    else if (y_new < y)
-    {
-      for (; y > y_new; --y)
-      {
-        motorY.step(1, BACKWARD, DOUBLE);
-        delay(5);
-      }
-    }
-  }
 
-  void printCurrentCoordinate()
-  {
-    Serial.print("current: X: ");
-    Serial.print(x);
-    Serial.print(" Y: ");
-    Serial.println(y);
-  }
-  
-private:
-  int x;
-  int y;
-  int w;
-  int h;  
+    void setDelay(int del_)
+    {
+      del = del_;
+    }
+
+    void setWidth(int w_)
+    {
+      w = w_;
+    }
+
+    void setHeight(int h_)
+    {
+      h = h_;
+    }
+
+  private:
+    int x;
+    int y;
+    int w;
+    int h;
+
+    int del;
 };
 
-MotorsWrapper moto(1000, 1000);
+MotorsWrapper moto(1000, 1000, 5);
 char incomingByte[256];
 
-void setup() 
+void setup()
 {
   Serial.begin(9600);           // set up Serial library at 9600 bps
-  //Serial.println("Stepper test!");
 }
 
 
@@ -109,21 +138,6 @@ void loop()
     Serial.print(incomingByte[i]);
     Serial.print(" ");
   }
-
-
-  /*
-  //how to paint a square
-  moto.printCurrentCoordinate();
-  moto.go(100, 100);
-  moto.printCurrentCoordinate();
-  moto.go(100, 400);
-  moto.printCurrentCoordinate();
-  moto.go(400, 400);
-  moto.printCurrentCoordinate();
-  moto.go(400, 100);
-  moto.printCurrentCoordinate();
-  moto.go(100, 100);
-  */
 }
 
 
