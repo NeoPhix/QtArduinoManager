@@ -1,29 +1,26 @@
 #include <AFMotor.h>
 #include <Servo.h>
 
-// Подключаем шаговый двигатель к порту 1
-// порт 1 - M1, M2
-// порт 2 - M3, M4
-// 48 - количество шагов для полного оборота
 
-//int w = 1000;  //our size
-//int h = 1000;
-//
-//int x = 0;  //that's our coords
-//int y = 0;
+int stringToInt(char* str, int n)
+{
+  int res = 0;
+  int p = 1;
+  for (int i = 0; i < n-1; ++i)
+  {
+    p *= 10 ;
+  }
+  for (int i  = 0; i < n - 1; ++i)
+  {
+    res += (str[i] - 0x30)*p ;
+    p /= 10;
+  }
+  return res;
+}
 
-//bool strEqual(char[] str1, char[] str2)
-//{
-//  int i = 0;
-//  while (str1[i] != '\0' && str2[i] != '\0')
-//  {
-//    if (str1[i] != str2[i])
-//      return false;
-//    i++;
-//  }
-//  return true;
-//}
-
+//////////////
+//MotorClass//
+//////////////
 AF_Stepper motorX(200, 1);
 AF_Stepper motorY(200, 2);
 
@@ -51,7 +48,7 @@ class MotorsWrapper
         Serial.println("Y coordinate is unavailable");
       }
 
-      //Y coordinate
+      //X coordinate
       if (x_new > x)
       {
         for (; x < x_new; ++x)
@@ -120,23 +117,50 @@ class MotorsWrapper
     int del;
 };
 
-MotorsWrapper moto(1000, 1000, 5);
-char incomingByte[256];
+enum LoopAction {ActionWait, ActionGo, ActionDelayChange, ActionPrintCoords};
 
+/////////
+//Setup//
+/////////
+MotorsWrapper moto(1000, 1000, 5);  //h = 1000, w = 1000, delaty = 5 ms
+char incomingBytes[256];
+LoopAction loopAction = ActionWait;
 void setup()
 {
   Serial.begin(9600);           // set up Serial library at 9600 bps
 }
 
-
+////////
+//Loop//
+////////
 void loop()
 {
-  int n = Serial.available();
-  for (int i = 0; i < n; i++)
+  switch (loopAction)
   {
-    incomingByte[i] = Serial.read();
-    Serial.print(incomingByte[i]);
-    Serial.print(" ");
+    case ActionWait:
+      {
+        int n = Serial.available();
+        for (int i = 0; i < n; i++)
+        {
+          if (i%2 == 0)
+            incomingBytes[i] = Serial.read();
+          else
+            incomingBytes[i] = ' ';  
+        }
+        delay(500);
+        if (n > 0)
+          Serial.println("I have got new bytes!");
+      }
+      break;
+    case ActionGo:
+      loopAction = ActionWait ;
+      break;
+    case ActionDelayChange:
+      loopAction = ActionWait ;
+      break;
+    default:
+      loopAction = ActionWait ;
+      break;
   }
 }
 
