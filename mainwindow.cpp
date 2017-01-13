@@ -72,9 +72,14 @@ void MainWindow::portWriteMessage()
     }
 }
 
-
-
-
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    int key = event->key();
+    if (key == Qt::Key_Enter && ui->lineEdit->isActiveWindow())
+    {
+        emit ui->pushButton_Send->clicked();
+    }
+}
 
 
 

@@ -25,11 +25,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    consoleArduino/SerialClass.cpp
+        mainwindow.cpp
 
-HEADERS  += mainwindow.h \
-    consoleArduino/SerialClass.h
+HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 

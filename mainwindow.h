@@ -5,6 +5,7 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QList>
+#include <QKeyEvent>
 
 //#define BUF_SIZE 256
 
@@ -28,6 +29,9 @@ public slots:
 private:
     Ui::MainWindow *ui;
     QSerialPort *port;
+
+protected:
+    virtual void keyPressEvent(QKeyEvent *event);
 //    char buf[BUF_SIZE];
 };
 
