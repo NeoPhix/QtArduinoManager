@@ -25,6 +25,7 @@ public slots:
     void portChanged(QString portName);
     void portReadyRead();
     void portWriteMessage();
+    void portGo();
 
 private:
     Ui::MainWindow *ui;

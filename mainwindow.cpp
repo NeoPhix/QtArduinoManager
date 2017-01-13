@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->comboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(portChanged(QString)));
     connect(port, SIGNAL(readyRead()), this, SLOT(portReadyRead()));
     connect(ui->pushButton_Send, SIGNAL(clicked(bool)), this, SLOT(portWriteMessage()));
+    connect(ui->pushButton_Go, SIGNAL(clicked(bool)), this, SLOT(portGo()));
 
     QList<QSerialPortInfo> avPorts =  QSerialPortInfo::availablePorts();
 
@@ -82,7 +83,22 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 }
 
 
+void MainWindow::portGo()
+{
+    int x = ui->spinBox_CoordsX->value();
+    int y = ui->spinBox_CoordsY->value();
 
+    if (port->isOpen())
+    {
+        QString str = ui->lineEdit->text();
+        ui->textBrowser->append("Arduino goes to new position!");
+        port->write(str.toLatin1().data(), str.toLatin1().size());
+    }
+    else
+    {
+        ui->textBrowser->append("The COM-port is closed. Please choose the correct COM-port.");
+    }
+}
 
 
 
