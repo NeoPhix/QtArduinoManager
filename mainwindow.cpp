@@ -5,7 +5,7 @@
 #include <QSerialPortInfo>
 #include <QList>
 #include <QString>
-#include <windows.h>
+#include <QTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //            emit ui->comboBox->currentTextChanged(iter->portName());
 //        }
     }
+
+    receivedMessage = new QString;
 }
 
 MainWindow::~MainWindow()
@@ -52,8 +54,6 @@ void MainWindow::portChanged(QString portName)
 
 void MainWindow::portReadyRead()
 {
-    Sleep(1000);
-    int n = port->bytesAvailable();
     QString str(port->readAll());
     ui->textBrowser->append("Arduino answered: " + str);
 }

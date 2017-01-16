@@ -30,6 +30,7 @@ public slots:
 private:
     Ui::MainWindow *ui;
     QSerialPort *port;
+    QString *receivedMessage;
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
