@@ -1,25 +1,7 @@
 #include <AFMotor.h>
 #include <Servo.h>
 
-int stringToInt(char *str, int n)
-{
-  int res = 0;
-  int p = 1;
-  for (int i = 0; i < n - 1; ++i)
-  {
-    p *= 10;
-  }
-  for (int i = 0; i < n - 1; ++i)
-  {
-    res += (str[i] - 0x30) * p;
-    p /= 10;
-  }
-  return res;
-}
-
-//////////////
-//MotorClass//
-//////////////
+//Motors
 AF_Stepper motorX(200, 1);
 AF_Stepper motorY(200, 2);
 
@@ -116,80 +98,63 @@ private:
   int del;
 };
 
-enum LoopAction
-{
-  ActionWait,
-  ActionGo,
-  ActionDelayChange,
-  ActionPrintCoords
-};
-
-/////////
 //Setup//
-/////////
+//Motors params
 MotorsWrapper moto(1000, 1000, 5); //h = 1000, w = 1000, delaty = 5 ms
-char incomingBytes[256];
-LoopAction loopAction = ActionWait;
 
+//Input string params
+char endFlag = '!';
+const int bytesNumber = 256;
+char incomingBytes[bytesNumber];
 int bytesAvailable = 0;
 int incomingByte = 0;
 int iter = 0;
+
+//to do ? 
+char command = 'W';   //wait
 
 void setup()
 {
   Serial.begin(9600); // set up Serial library at 9600 bps
 }
 
-////////
 //Loop//
-////////
 
-
-int cur = 0;
+int cur = 0;  //will be cleared
 
 void loop()
 {
   if (iter > 256)
   {
     Serial.println("Fail input string length. Maximal length is 256 symbols includind '\\n' symbol!!!");
+    clearString(incomingBytes, bytesNumber);
     iter = 0;
   }
-
   //reading
-  bytesAvailable = Serial.available();
-  for (int i = 0; i < bytesAvailable; ++i)
+  command = readBytes();
+  
+  //switch/case
+  switch (command)
   {
-    incomingBytes[iter] = Serial.read();
-    iter++;
-  }
-  bytesAvailable = 0;
+    case 'W': //Wait
+      break;
+    case 'G': //Go to X and Y
+      Serial.print("GO");
+      
+      goAction(incomingBytes);
+      
+      clearString(incomingBytes, bytesNumber);
+      command = 'W';
+      break;
+    case 'D': //Change delay to N ms
+      Serial.print("DELAY");
 
-  //todo
-  //think about flags for arduino!
-  if (incomingBytes[iter-1] == '!')
-  {
-    Serial.println("Yep! We have ended reading!");
-  }
-
-//switch/case
-
-  switch (loopAction)
-  {
-  case ActionWait:
-    break;
-  case ActionGo:
-    if (incomingBytes[iter - 1] == '!')
-    {
-      Serial.println("Yep! We have ended reading!");
-    }
-    loopAction = ActionWait;
-    break;
-  case ActionDelayChange:
-    loopAction = ActionWait;
-    break;
-  default:
-    loopAction = ActionWait;
-    break;
+      
+      //delayChangeAction(incomingBytes, bytesNumber);
+      clearString(incomingBytes, bytesNumber);
+      command = 'W';
+      break;
   }
 }
+
 
