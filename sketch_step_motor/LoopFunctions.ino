@@ -12,9 +12,9 @@ char readBytes()
 
     if (incomingBytes[iter - 1] == endFlag)
     {
-      Serial.println("Yep! We have ended reading!");
-      Serial.println("Our results:");
-      Serial.println(incomingBytes);
+//      Serial.println("Yep! We have ended reading!");
+//      Serial.println("Our results:");
+//      Serial.println(incomingBytes);
       iter = 0;
       return incomingBytes[0];  //G presents "Go to coords"; D presents delay changing
     }
@@ -22,15 +22,31 @@ char readBytes()
   return 'W'; //Wait action in main loop
 }
 
-//void delayChangeAction(incomingBytes, bytesNumber)
-//{
-//  int k = 0;
-//}
-//
+void delayChangeAction(char *str)
+{
+  if (str[1] != ' ')
+  {
+    Serial.println("Error syntaxis of delat command. Need one argument splited by space (new delay)");
+    return;
+  }
+
+  char d_str[7];
+  int i = 0;
+  int n = 2;
+  for (i = 0; str[n] != endFlag; ++n)
+  {
+    d_str[i] = str[n];
+    i++;
+  }
+  d_str[i] = '\0';
+  
+  int d = stringToInt(d_str);
+  moto.setDelay(d);
+}
 
 void goAction (char *str)
 {
-  if (str[0] != ' ')
+  if (str[1] != ' ')
   {
     Serial.println("Error syntaxis of go command. Need arguments splited by spaces (X and Y coodinates)");
     return;
@@ -46,8 +62,6 @@ void goAction (char *str)
     i++;
   }
   x_str[i] = '\0';
-
-  Serial.println(x_str);
   
   if (str[n] == endFlag)
   {
@@ -61,8 +75,6 @@ void goAction (char *str)
     i++;
   }
   y_str[i] = '\0';
-
-  Serial.println(x_str);
   
   int x = stringToInt(x_str);
   int y = stringToInt(y_str);

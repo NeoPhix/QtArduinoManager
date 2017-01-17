@@ -68,15 +68,19 @@ public:
 
   void printCurrentCoordinate()
   {
-    Serial.print("current: X: ");
     Serial.print(x);
-    Serial.print(" Y: ");
+    Serial.print(" ");
     Serial.println(y);
   }
 
   void setDelay(int del_)
   {
     del = del_;
+  }
+
+  void printDelay()
+  {
+    Serial.println(del);
   }
 
   void setWidth(int w_)
@@ -139,7 +143,7 @@ void loop()
     case 'W': //Wait
       break;
     case 'G': //Go to X and Y
-      Serial.print("GO");
+      Serial.println("GO");
       
       goAction(incomingBytes);
       
@@ -147,10 +151,26 @@ void loop()
       command = 'W';
       break;
     case 'D': //Change delay to N ms
-      Serial.print("DELAY");
-
+      Serial.println("DELAY");
       
-      //delayChangeAction(incomingBytes, bytesNumber);
+      delayChangeAction(incomingBytes);
+      
+      clearString(incomingBytes, bytesNumber);
+      command = 'W';
+      break;
+    case 'P': //Prints current position of motors
+      Serial.println("Current position:");
+      
+      moto.printCurrentCoordinate();
+      
+      clearString(incomingBytes, bytesNumber);
+      command = 'W';
+      break;
+    case 'C': //Prints current delay
+      Serial.println("Current delay");
+      
+      moto.printCurrentCoordinate();
+      
       clearString(incomingBytes, bytesNumber);
       command = 'W';
       break;
