@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_Send, SIGNAL(clicked(bool)), this, SLOT(portWriteMessage()));
     connect(ui->pushButton_Go, SIGNAL(clicked(bool)), this, SLOT(portGo()));
     connect(ui->pushButton_ChangeDelay, SIGNAL(clicked(bool)), this, SLOT(portChangeDelay()));
+    connect(ui->pushButton_GetCoords, SIGNAL(clicked(bool)), this, SLOT(portGetCoords()));
+    connect(ui->pushButton_GetDelay, SIGNAL(clicked(bool)), this, SLOT(portGetDelay()));
 
     QList<QSerialPortInfo> avPorts =  QSerialPortInfo::availablePorts();
 
@@ -55,7 +57,24 @@ void MainWindow::portReadyRead()
     {
         *(receivedMessage.end()-1) = ' ';
         *(receivedMessage.end()-2) = ' ';
-        ui->textBrowser->append("Arduino answered: " + receivedMessage);
+        switch ((receivedMessage.begin()->toLatin1()))
+        {
+        case 'P':    //Current position is returned
+            changeCoords(receivedMessage);
+            *(receivedMessage.begin()) = ':';
+            *(receivedMessage.begin()+1) = ' ';
+            ui->textBrowser->append("Current position" + receivedMessage);
+            break;
+        case 'C':    //Current delay is returned
+            changeDelay(receivedMessage);
+            *(receivedMessage.begin()) = ':';
+            *(receivedMessage.begin()+1) = ' ';
+            ui->textBrowser->append("Current delay" + receivedMessage);
+            break;
+        default:
+            ui->textBrowser->append(receivedMessage);
+            break;
+        }
         receivedMessage.clear();
     }
 }
@@ -117,6 +136,47 @@ void MainWindow::portChangeDelay()
         ui->textBrowser->append("The COM-port is closed. Please choose the correct COM-port.");
     }
 }
+
+void MainWindow::portGetCoords()
+{
+    if (port->isOpen())
+    {
+        QString str = "P!";
+        ui->textBrowser->append(str);
+        port->write(str.toLatin1().data(), str.toLatin1().size());
+    }
+    else
+    {
+        ui->textBrowser->append("The COM-port is closed. Please choose the correct COM-port.");
+    }
+}
+
+
+
+void MainWindow::portGetDelay()
+{
+    if (port->isOpen())
+    {
+        QString str = "C!";
+        ui->textBrowser->append(str);
+        port->write(str.toLatin1().data(), str.toLatin1().size());
+    }
+    else
+    {
+        ui->textBrowser->append("The COM-port is closed. Please choose the correct COM-port.");
+    }
+}
+
+void MainWindow::changeDelay(const QString& message)
+{
+
+}
+
+void MainWindow::changeCoords(const QString& message)
+{
+
+}
+
 
 
 

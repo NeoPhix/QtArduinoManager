@@ -27,6 +27,9 @@ public slots:
     void portWriteMessage();
     void portGo();
     void portChangeDelay();
+    void portGetCoords();
+    void portGetDelay();
+
 
 private:
     Ui::MainWindow *ui;
@@ -35,7 +38,10 @@ private:
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
-//    char buf[BUF_SIZE];
+
+private:
+    void changeDelay(const QString& message);
+    void changeCoords(const QString& message);
 };
 
 #endif // MAINWINDOW_H

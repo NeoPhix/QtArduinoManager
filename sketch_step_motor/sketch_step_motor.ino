@@ -159,7 +159,7 @@ void loop()
       command = 'W';
       break;
     case 'P': //Prints current position of motors
-      Serial.print("Current position: ");
+      Serial.print("P ");
       
       moto.printCurrentCoordinate();
       
@@ -167,9 +167,9 @@ void loop()
       command = 'W';
       break;
     case 'C': //Prints current delay
-      Serial.print("Current delay: ");
+      Serial.print("C ");
       
-      moto.printCurrentCoordinate();
+      moto.printDelay();
       
       clearString(incomingBytes, bytesNumber);
       command = 'W';
