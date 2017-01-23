@@ -26,11 +26,12 @@ public slots:
     void portReadyRead();
     void portWriteMessage();
     void portGo();
+    void portChangeDelay();
 
 private:
     Ui::MainWindow *ui;
     QSerialPort *port;
-    QString *receivedMessage;
+    QString receivedMessage;
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event);

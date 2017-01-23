@@ -26,7 +26,7 @@ void delayChangeAction(char *str)
 {
   if (str[1] != ' ')
   {
-    Serial.println("Error syntaxis of delat command. Need one argument splited by space (new delay)");
+    Serial.println("Error syntaxis of delay command. Need one argument splited by space (new delay)");
     return;
   }
 
@@ -69,6 +69,7 @@ void goAction (char *str)
     return;
   }
   
+  n++;
   for (i = 0; str[n] != ' ' && str[n] != endFlag; ++n)
   {
     y_str[i] = str[n];

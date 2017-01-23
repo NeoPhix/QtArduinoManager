@@ -21,19 +21,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(port, SIGNAL(readyRead()), this, SLOT(portReadyRead()));
     connect(ui->pushButton_Send, SIGNAL(clicked(bool)), this, SLOT(portWriteMessage()));
     connect(ui->pushButton_Go, SIGNAL(clicked(bool)), this, SLOT(portGo()));
+    connect(ui->pushButton_ChangeDelay, SIGNAL(clicked(bool)), this, SLOT(portChangeDelay()));
 
     QList<QSerialPortInfo> avPorts =  QSerialPortInfo::availablePorts();
 
     for (auto iter = avPorts.begin(); iter != avPorts.end(); ++iter)
     {
         ui->comboBox->addItem(iter->portName());
-//        if (QString::compare(iter->description(), "Arduino Uno", Qt::CaseSensitive) == 0)
-//        {
-//            emit ui->comboBox->currentTextChanged(iter->portName());
-//        }
     }
-
-    receivedMessage = new QString;
 }
 
 MainWindow::~MainWindow()
@@ -55,7 +50,14 @@ void MainWindow::portChanged(QString portName)
 void MainWindow::portReadyRead()
 {
     QString str(port->readAll());
-    ui->textBrowser->append("Arduino answered: " + str);
+    receivedMessage += str;
+    if (*(str.end()-1) == '\n')
+    {
+        *(receivedMessage.end()-1) = ' ';
+        *(receivedMessage.end()-2) = ' ';
+        ui->textBrowser->append("Arduino answered: " + receivedMessage);
+        receivedMessage.clear();
+    }
 }
 
 void MainWindow::portWriteMessage()
@@ -90,8 +92,8 @@ void MainWindow::portGo()
 
     if (port->isOpen())
     {
-        QString str = ui->lineEdit->text();
-        ui->textBrowser->append("Arduino goes to new position!");
+        QString str = "G " + QString::number(x) + " " + QString::number(y) + "!";
+        ui->textBrowser->append(str);
         port->write(str.toLatin1().data(), str.toLatin1().size());
     }
     else
@@ -99,6 +101,23 @@ void MainWindow::portGo()
         ui->textBrowser->append("The COM-port is closed. Please choose the correct COM-port.");
     }
 }
+
+void MainWindow::portChangeDelay()
+{
+    int delay = ui->spinBox_Delay->value();
+
+    if (port->isOpen())
+    {
+        QString str = "D " + QString::number(delay) + "!";
+        ui->textBrowser->append(str);
+        port->write(str.toLatin1().data(), str.toLatin1().size());
+    }
+    else
+    {
+        ui->textBrowser->append("The COM-port is closed. Please choose the correct COM-port.");
+    }
+}
+
 
 
 
