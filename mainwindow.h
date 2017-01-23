@@ -40,8 +40,8 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event);
 
 private:
-    void changeDelay(const QString& message);
-    void changeCoords(const QString& message);
+    bool changeDelay(const QString& message);
+    bool changeCoords(const QString& message);
 };
 
 #endif // MAINWINDOW_H

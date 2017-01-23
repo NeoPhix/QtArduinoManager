@@ -60,16 +60,20 @@ void MainWindow::portReadyRead()
         switch ((receivedMessage.begin()->toLatin1()))
         {
         case 'P':    //Current position is returned
-            changeCoords(receivedMessage);
-            *(receivedMessage.begin()) = ':';
-            *(receivedMessage.begin()+1) = ' ';
-            ui->textBrowser->append("Current position" + receivedMessage);
+            if (changeCoords(receivedMessage))
+            {
+                *(receivedMessage.begin()) = ':';
+                *(receivedMessage.begin()+1) = ' ';
+                ui->textBrowser->append("Current position" + receivedMessage);
+            }
             break;
         case 'C':    //Current delay is returned
-            changeDelay(receivedMessage);
-            *(receivedMessage.begin()) = ':';
-            *(receivedMessage.begin()+1) = ' ';
-            ui->textBrowser->append("Current delay" + receivedMessage);
+            if (changeDelay(receivedMessage))
+            {
+                *(receivedMessage.begin()) = ':';
+                *(receivedMessage.begin()+1) = ' ';
+                ui->textBrowser->append("Current delay" + receivedMessage);
+            }
             break;
         default:
             ui->textBrowser->append(receivedMessage);
@@ -167,14 +171,32 @@ void MainWindow::portGetDelay()
     }
 }
 
-void MainWindow::changeDelay(const QString& message)
+bool MainWindow::changeCoords(const QString& message)
 {
-
+    QStringList list = message.split(' ');
+    if (list.size() != 5)   //command symbol, x parameter, y parameter
+    {
+        ui->textBrowser->append("Split error. Invalid message from arduino.");
+        return false;
+    }
+    int x = list[1].toInt();
+    int y = list[2].toInt();
+    ui->spinBox_CoordsX->setValue(x);
+    ui->spinBox_CoordsY->setValue(y);
+    return true;
 }
 
-void MainWindow::changeCoords(const QString& message)
+bool MainWindow::changeDelay(const QString& message)
 {
-
+    QStringList list = message.split(' ');
+    if (list.size() != 4)   //command symbol, delay parameter
+    {
+        ui->textBrowser->append("Split error. Invalid message from arduino.");
+        return false;
+    }
+    int delay = list[1].toInt();
+    ui->spinBox_Delay->setValue(delay);
+    return true;
 }
 
 
