@@ -143,34 +143,26 @@ void loop()
     case 'W': //Wait
       break;
     case 'G': //Go to X and Y
-      Serial.println("GO");
-      
       goAction(incomingBytes);
-      
       clearString(incomingBytes, bytesNumber);
       command = 'W';
+      //Serial.println(); //Need to add end symbol for understanding of opertion ending
       break;
     case 'D': //Change delay to N ms
-      Serial.println("DELAY");
-      
       delayChangeAction(incomingBytes);
-      
       clearString(incomingBytes, bytesNumber);
       command = 'W';
+      //Serial.println(); //Need to add end symbol for understanding of opertion ending
       break;
     case 'P': //Prints current position of motors
       Serial.print("P ");
-      
-      moto.printCurrentCoordinate();
-      
+      moto.printCurrentCoordinate();      
       clearString(incomingBytes, bytesNumber);
       command = 'W';
       break;
     case 'C': //Prints current delay
       Serial.print("C ");
-      
-      moto.printDelay();
-      
+      moto.printDelay();      
       clearString(incomingBytes, bytesNumber);
       command = 'W';
       break;
